@@ -5,6 +5,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+/*
+g++ main.cpp  -o main -Wwrite-strings -fpermissive
+*/
 
 // commands:
 typedef enum  {
@@ -112,7 +115,7 @@ int SendCommand(COMMANDS cmd, char *rx, int rxbytes, int timeout)
 
   printf("Command: ");
   for(int i = 0; i< LEN[cmd]; i++)
-	  printf("%hhX", command[i]);
+	  printf("%hhX-", CMD[cmd][i]);
   printf("\n");
   printf("Sum: %hhX\n", sum);
 
@@ -220,7 +223,7 @@ int main(int argc, char* argv[])
     ret = SendCommand( LASERON, NULL, 0, 1);
 
 	printf("LaserON: ret\n", ret); 
-//	ret = MeasureDistance (&val, MEAS_NORMAL);
+	ret = MeasureDistance (&val, MEAS_NORMAL);
 
 //	printf("%.8f\n", val);
 //	printf("ret\n", ret); 
