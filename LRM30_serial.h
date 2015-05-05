@@ -8,7 +8,7 @@
 
 #include "serial/serial.h"
 
-#define DEBUG 1
+#define DEBUG 0
 
 
 #define CRC8_INITIAL_VALUE  0xAA

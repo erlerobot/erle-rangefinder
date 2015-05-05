@@ -13,12 +13,12 @@ LRM30_serial::LRM30_serial(unsigned long baud, std::string port)
 int LRM30_serial::connect()
 {
 	my_serial = new serial::Serial(this->port, 
-							  this->baud,
-							 serial::Timeout::simpleTimeout(200),
-							 serial::eightbits,
-							 serial::parity_none,
-							 serial::stopbits_one, 
-							 serial::flowcontrol_none);
+									this->baud,
+									serial::Timeout::simpleTimeout(200),
+									serial::eightbits,
+									serial::parity_none,
+									serial::stopbits_one, 
+									serial::flowcontrol_none);
 
 	std::cout << "Is the serial port open?";
 	if(my_serial->isOpen())
@@ -60,9 +60,9 @@ int LRM30_serial::laserON()
 
 	int n  = my_serial->read(v_recv, 5);
 
-	if (DEBUG){
+#if DEBUG
 		std::cout << "laserON Bytes written: " << bytes_wrote << " bytes recieved: " << n << std::endl;
-	}
+#endif
 }
 
 int LRM30_serial::laserOFF()
@@ -77,10 +77,9 @@ int LRM30_serial::laserOFF()
 
 	std::vector<uint8_t> v_recv;
 	int n  = my_serial->read(v_recv, 5);
-
-	if (DEBUG){
+#if DEBUG
 		std::cout << "laserON Bytes written: " << bytes_wrote << " bytes recieved: " << n << std::endl;
-	}
+#endif
 }
 
 float LRM30_serial::singleshot()
@@ -92,12 +91,6 @@ float LRM30_serial::singleshot()
 	v.push_back(0x00);
 	v.push_back(CalcCrc8FromArray ( v, CRC8_INITIAL_VALUE ));
 
-	for(int i = 0; i < v.size();i ++){
-		printf(" - %.2X - ", v[i]);
-		std::bitset<8> x(v[i]);
-		std::cout << x << std::endl;
-	}
-
 	size_t bytes_wrote = my_serial->write(v);
 
 	std::vector<uint8_t> v_rev;
@@ -106,23 +99,17 @@ float LRM30_serial::singleshot()
 
 	uint32_t _Recv2 = v_rev[5]<<24 | v_rev[4]<<16 | v_rev[3]<<8 | v_rev[2];
 	
-	if(DEBUG){
-		std::cout << "------singleshot-----"  << std::endl;
-		
-		std::cout << "n: " << n << std::endl;
-		for(int i = 0; i < n;i ++){
-			//std::cout << "v[" << i <<"]: "<< std::hex << v[i];
-			printf(" - %.2X - ", v_rev[i]);
-			std::bitset<8> x(v_rev[i]);
-			std::cout << x << std::endl;
-		}
-		printf("value: %.4f \n", _Recv2*50e-6);
-		printf("value: %hhX \n", _Recv2);
-		std::cout << ", Bytes written: ";
-		std::cout << bytes_wrote << ", Bytes read: ";
-		std::cout << n << std::endl;
-		std::cout << "------singleshot end-----"  << std::endl;
+#if DEBUG
+	for(int i = 0; i < n;i ++){
+		printf(" - %.2X - ", v_rev[i]);
+		std::bitset<8> x(v_rev[i]);
+		std::cout << x ;
 	}
+	std::cout << std::endl;
+	printf("value: %.4f \n", _Recv2*50e-6);
+	printf("value: %hhX \n", _Recv2);
+	std::cout << "Bytes written: " << bytes_wrote << ", Bytes read: " << n << std::endl;
+#endif
 	return _Recv2*50e-6;
 }
  
@@ -158,7 +145,12 @@ float LRM30_serial::getMeasure()
 	std::vector<uint8_t> v_recv;
 	size_t bytes_wrote = my_serial->write(v);
 	int n  = my_serial->read(v_recv, 10);
-/*
+
+	if(n==0) return  -1;
+	if(v_recv[0]!=0) return  -1;
+	uint32_t _Recv2 = v_recv[5]<<24 | v_recv[4]<<16 | v_recv[3]<<8 | v_recv[2];
+
+#if DEBUG
 	std::cout << "n: " << n << std::endl;
 	for(int i = 0; i < n;i ++){
 		printf(" - %.2X - ", v_recv[i]);
@@ -166,29 +158,9 @@ float LRM30_serial::getMeasure()
 		std::cout << x ;
 	}
 	std::cout << std::endl;
-*/
-	if(n==0) return  -1;
-	if(v_recv[0]!=0) return  -1;
-	//std::cout << v_recv[1] << std::endl;	
+#endif
 
-	uint32_t _Recv2 = v_recv[5]<<24 | v_recv[4]<<16 | v_recv[3]<<8 | v_recv[2];
 
-/*
-	if(DEBUG){
-		std::cout << "n: " << n << std::endl;
-		for(int i = 0; i < n;i ++){
-			printf(" - %.2X - ", v_recv[i]);
-			std::bitset<8> x(v_recv[i]);
-			std::cout << x << std::endl;
-		}
-		printf("value: %.4f \n", _Recv2*50e-6);
-		printf("value: %hhX \n", _Recv2);
-		std::cout << ", Bytes written: ";
-		std::cout << bytes_wrote << ", Bytes read: ";
-		std::cout << n << std::endl;
-		std::cout << "------cont shot end-----"  << std::endl;
-	}
-*/
 	return  _Recv2*50e-6;
 }
 

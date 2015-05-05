@@ -8,9 +8,6 @@ g++ main2.cpp LRM30_serial.cpp -o main2 -I/home/ahcorde/serial/serial/include -L
 
 int main(int argc, char* argv[])
 {
-	unsigned long baud = 9600;
-	std::string port=std::string("/dev/ttyACM0");
-
 	LRM30_serial lrm30(9600, "/dev/ttyACM0");
 	lrm30.connect();
 
@@ -20,11 +17,9 @@ int main(int argc, char* argv[])
 
 	std::cout << "continuous shot value: " << lrm30.continuousshot() << std::endl; 
 
-	lrm30.continuousshot();
-
 	int cont = 0;
 
-	while(true){
+	while(cont < 10){
 		float measure  = lrm30.getMeasure();
 		std::cout << cont <<": ";
 		if(measure != -1)
