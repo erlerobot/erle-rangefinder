@@ -3,7 +3,7 @@
 /*
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/ahcorde/serial/serial/build/devel/lib
 
-g++ main2.cpp LRM30_serial.cpp -o main2 -I/home/ahcorde/serial/serial/include -L/home/ahcorde/serial/serial/build/devel/lib -lserial
+g++ main.cpp LRM30_serial.cpp -o main -I/usr/local/include -L/usr/local/lib -lserial
 */
 
 int main(int argc, char* argv[])
