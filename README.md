@@ -1,6 +1,6 @@
-#erle-rangefinder
+# erle-rangefinder
 
-##Compile instructions
+## Compile instructions
 
 #### Terminal
 To visualize the lectures from the sensor in the terminal
@@ -17,5 +17,5 @@ qtcreator BoschLMR30.pro
 
 Click on the hammer to compile ;)
 
-##Dependencies
+## Dependencies
 * [serial](https://github.com/wjwwood/serial)
